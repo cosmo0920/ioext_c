@@ -1,5 +1,7 @@
 # IOExt
 
+[![Build status](https://ci.appveyor.com/api/projects/status/iluieyjg62opf7xo/branch/master?svg=true)](https://ci.appveyor.com/project/cosmo0920/ioext-c/branch/master)
+
 IO extenstion with Windows CRT function.
 Currently, it is only used for _setmaxstdio/_getmaxstdio functions in Windows C runtime.
 
