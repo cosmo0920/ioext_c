@@ -3,7 +3,7 @@ $LOAD_PATH.unshift(lib) unless $LOAD_PATH.include?(lib)
 require "ioext/version"
 
 Gem::Specification.new do |spec|
-  spec.name          = "ioext"
+  spec.name          = "ioext_c"
   spec.version       = IOExt::VERSION
   spec.authors       = ["Hiroshi Hatake"]
   spec.email         = ["cosmo0920.wp@gmail.com"]

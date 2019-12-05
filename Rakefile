@@ -13,7 +13,7 @@ end
 
 require "rake/extensiontask"
 
-spec = eval File.read("ioext.gemspec")
+spec = eval File.read("ioext_c.gemspec")
 
 Rake::ExtensionTask.new("ioext", spec) do |ext|
   ext.lib_dir = "lib/ioext"
