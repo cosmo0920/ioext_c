@@ -15,69 +15,55 @@
 
 struct IOExt {};
 
-static void ioext_free(void* ioext);
-
-static const rb_data_type_t rb_win_ioext_type = {
-  "ioext/c_runtime",
-  {
-    0,
-    ioext_free,
-    0,
-  },
-  NULL,
-  NULL,
-  RUBY_TYPED_FREE_IMMEDIATELY
-};
-
-static void
-ioext_free(void* ptr)
-{
+static void ioext_free(void* ptr) {
   xfree(ptr);
 }
 
-static VALUE
-rb_win_ioext_alloc(VALUE klass)
-{
-  VALUE obj;
+static const rb_data_type_t rb_ioext_type = {
+  "ioext/c_runtime",
+  { 0, ioext_free, 0 },
+  0, 0,
+  RUBY_TYPED_FREE_IMMEDIATELY
+};
+
+static VALUE 
+rb_ioext_alloc(VALUE klass) {
   struct IOExt* ioext;
-  obj = TypedData_Make_Struct(
-    klass, struct IOExt, &rb_win_ioext_type, ioext);
-  return obj;
+  return TypedData_Make_Struct(klass, struct IOExt, &rb_ioext_type, ioext);
 }
 
 static VALUE
-rb_win_ioext_initialize(VALUE self)
-{
+ioext_initialize(VALUE self) {
   return Qnil;
 }
 
-static VALUE
-rb_win_ioext_getmaxstdio(VALUE self)
-{
+static VALUE 
+ioext_maxstdio(VALUE self) {
   return INT2NUM(_getmaxstdio());
 }
 
-static VALUE
-rb_win_ioext_setmaxstdio(VALUE self, VALUE newmaxfd)
-{
+static VALUE 
+ioext_set_maxstdio(VALUE self, VALUE newmaxfd) {
   DWORD ret = 0;
   const int fdlimit = 2048;
+
+  if (NUM2INT(newmaxfd) < 0) {
+    rb_raise(rb_eArgError, "max fd must not negative");
+  }
 
   ret = _setmaxstdio(min(NUM2INT(newmaxfd), fdlimit));
 
   return INT2NUM(ret);
 }
 
-void
-Init_ioext(void)
-{
-  rb_cIOExt = rb_define_class("IOExt", rb_cObject);
-  rb_define_alloc_func(rb_cIOExt, rb_win_ioext_alloc);
+void 
+Init_ioext(void) {
+  VALUE rb_cIOExt = rb_define_class("IOExt", rb_cObject);
+  rb_define_alloc_func(rb_cIOExt, rb_ioext_alloc);
 
+  rb_define_method(rb_cIOExt, "initialize", ioext_initialize, 0);
+  rb_define_method(rb_cIOExt, "maxstdio", ioext_maxstdio, 0);
+  rb_define_method(rb_cIOExt, "set_maxstdio", ioext_set_maxstdio, 1);
+  rb_define_method(rb_cIOExt, "maxstdio=", ioext_set_maxstdio, 1);
   rb_define_const(rb_cIOExt, "IOB_ENTRIES", LONG2NUM(_IOB_ENTRIES));
-
-  rb_define_method(rb_cIOExt, "initialize", rb_win_ioext_initialize, 0);
-  rb_define_method(rb_cIOExt, "maxstdio", rb_win_ioext_getmaxstdio, 0);
-  rb_define_method(rb_cIOExt, "maxstdio=", rb_win_ioext_setmaxstdio, 1);
-  rb_define_method(rb_cIOExt, "setmaxstdio", rb_win_ioext_setmaxstdio, 1);
 }
