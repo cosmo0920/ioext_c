@@ -49,7 +49,7 @@ class IOExtTest < ::Test::Unit::TestCase
   end
 
   def test_setmaxstdio_error_setmaxfd
-    fd = 10
+    fd = -20
     assert_equal(-1, @ioext.setmaxstdio(fd))
     assert_equal(@default_stdio, @ioext.maxstdio)
   end
