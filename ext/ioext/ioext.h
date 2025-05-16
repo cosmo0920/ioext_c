@@ -14,6 +14,9 @@
 #ifndef _IOEXT_H_
 #define _IOEXT_H_
 
+#if defined(__GNUC__) && !defined(_Bool) /* check _Bool macro existence */
+#include <stdbool.h>
+#endif
 #include <ruby.h>
 #include <ruby/encoding.h>
 
